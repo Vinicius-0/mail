@@ -14,7 +14,31 @@
     <div id="emails-view" class="list-group"> 
     </div>
 
-    <div id="email-view" class="list-group"> 
+    <div id="email-view" class="list-group">
+        <div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">from</span>
+                <a type="text" class="form-control" id="email-view-from"></a>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">to</span>
+                <a type="text" class="form-control" id="email-view-to"></a>
+
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">subject</span>
+                <a type="text" class="form-control" id="email-view-subject"></a>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">date</span>
+                <a type="text" class="form-control" id="email-view-date"></a>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" id="reply">Reply</button>
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" id="email-view-body" rows="3" disabled></textarea>
+            <!-- <a id="email-view-body"></a> -->
+        </div>         
     </div>
 
     <div id="compose-view">

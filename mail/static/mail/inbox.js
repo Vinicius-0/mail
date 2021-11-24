@@ -77,7 +77,7 @@ function showEmails(email, mailbox) {
     "list-group-item d-flex justify-content-between align-items-center";
   emailItem.id = "showEmailsItem";
 
-  if (email.read == true) {
+  if (email.read === false) {
     emailItem.style.backgroundColor = "#fff";
   } else {
     emailItem.style.backgroundColor = "#ddd";
@@ -96,6 +96,7 @@ function showEmails(email, mailbox) {
 
     emailButton.addEventListener("click", function () {
       changeArchive(email);
+      event.stopPropagation();
     });
   }
 
@@ -120,9 +121,11 @@ function load_email(email) {
       console.log(email);
     })
     .then(
-      (document.querySelector(
-        "#email-view"
-      ).innerHTML = `<h3>${email.timestamp}</h3>`)
+      (document.getElementById("email-view-from").innerText = email.sender),
+      (document.getElementById("email-view-to").innerText = email.recipients),
+      (document.getElementById("email-view-subject").innerText = email.subject),
+      (document.getElementById("email-view-date").innerText = email.timestamp),
+      (document.getElementById("email-view-body").innerText = email.body)
     );
 }
 
