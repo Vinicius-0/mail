@@ -15,16 +15,28 @@ document.addEventListener("DOMContentLoaded", function () {
   load_mailbox("inbox");
 });
 
-function compose_email() {
+function compose_email(email) {
   // Show compose view and hide other views
   document.querySelector("#emails-view").style.display = "none";
   document.querySelector("#compose-view").style.display = "block";
   document.querySelector("#email-view").style.display = "none";
 
   // Clear out composition fields
-  document.querySelector("#compose-recipients").value = "";
-  document.querySelector("#compose-subject").value = "";
-  document.querySelector("#compose-body").value = "";
+  if (email.body != undefined) {
+    document.getElementById("compose-recipients").value = email.sender;
+    if (email.subject.substring(0, 4) === "Re: ") {
+      document.getElementById("compose-subject").value = email.subject;
+    } else {
+      document.getElementById("compose-subject").value = "Re: " + email.subject;
+    }
+    document.getElementById(
+      "compose-body"
+    ).value = `On ${email.timestamp} ${email.sender} wrote: \n${email.body}\n`;
+  } else {
+    document.querySelector("#compose-recipients").value = "";
+    document.querySelector("#compose-subject").value = "";
+    document.querySelector("#compose-body").value = "";
+  }
 }
 
 function load_mailbox(mailbox) {
@@ -42,7 +54,7 @@ function load_mailbox(mailbox) {
     .then((response) => response.json())
     .then((emails) => {
       // Print emails
-      console.log(emails);
+      // console.log(emails);
       emails.forEach((element) => {
         showEmails(element, mailbox);
       });
@@ -62,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((response) => response.json())
       .then((result) => {
         // Print result
-        console.log(result);
+        // console.log(result);
       })
       .catch((error) => {
         console.log("Error:", error);
@@ -95,38 +107,34 @@ function showEmails(email, mailbox) {
     emailItem.append(emailButton);
 
     emailButton.addEventListener("click", function () {
-      changeArchive(email);
+      changeArchived(email);
       event.stopPropagation();
     });
   }
 
   emailItem.addEventListener("click", function () {
-    load_email(email);
+    loadSpecificEmail(email);
   });
 
   document.querySelector("#emails-view").append(emailItem);
 }
 
-function load_email(email) {
+function loadSpecificEmail(email) {
   document.querySelector("#emails-view").style.display = "none";
   document.querySelector("#compose-view").style.display = "none";
   document.querySelector("#email-view").style.display = "block";
 
   changeToRead(email);
 
-  fetch(`/emails/${email.id}`)
-    .then((response) => response.json())
-    .then((email) => {
-      // Print email
-      console.log(email);
-    })
-    .then(
-      (document.getElementById("email-view-from").innerText = email.sender),
-      (document.getElementById("email-view-to").innerText = email.recipients),
-      (document.getElementById("email-view-subject").innerText = email.subject),
-      (document.getElementById("email-view-date").innerText = email.timestamp),
-      (document.getElementById("email-view-body").innerText = email.body)
-    );
+  document.getElementById("email-view-from").innerText = email.sender;
+  document.getElementById("email-view-to").innerText = email.recipients;
+  document.getElementById("email-view-subject").innerText = email.subject;
+  document.getElementById("email-view-date").innerText = email.timestamp;
+  document.getElementById("email-view-body").innerText = email.body;
+
+  document
+    .querySelector("#reply")
+    .addEventListener("click", () => compose_email(email));
 }
 
 function changeToRead(email) {
@@ -138,7 +146,7 @@ function changeToRead(email) {
   });
 }
 
-function changeArchive(email) {
+function changeArchived(email) {
   fetch(`/emails/${email.id}`, {
     method: "PUT",
     body: JSON.stringify({
