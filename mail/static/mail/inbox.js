@@ -31,7 +31,7 @@ function compose_email(email) {
     }
     document.getElementById(
       "compose-body"
-    ).value = `On ${email.timestamp} ${email.sender} wrote: \n${email.body}\n`;
+    ).value = `\n\nOn ${email.timestamp} ${email.sender} wrote: \n${email.body}\n`;
   } else {
     document.querySelector("#compose-recipients").value = "";
     document.querySelector("#compose-subject").value = "";
@@ -72,10 +72,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }),
     })
       .then((response) => response.json())
+      .then(() => load_mailbox("sent"))
       .catch((error) => {
         console.log("Error:", error);
       });
-    load_mailbox("sent");
     return false;
   };
 });
@@ -121,18 +121,21 @@ function loadSpecificEmail(email) {
   document.querySelector("#emails-view").style.display = "none";
   document.querySelector("#compose-view").style.display = "none";
   document.querySelector("#email-view").style.display = "block";
+  document.querySelector("#email-view-body").style.whiteSpace = "pre-wrap";
 
   changeToRead(email);
 
-  document.getElementById("email-view-from").innerText = email.sender;
-  document.getElementById("email-view-to").innerText = email.recipients;
-  document.getElementById("email-view-subject").innerText = email.subject;
-  document.getElementById("email-view-date").innerText = email.timestamp;
-  document.getElementById("email-view-body").innerText = email.body;
+  document.getElementById("email-view-from").innerHTML = email.sender;
+  document.getElementById("email-view-to").innerHTML = email.recipients;
+  document.getElementById("email-view-subject").innerHTML = email.subject;
+  document.getElementById("email-view-date").innerHTML = email.timestamp;
+  document.getElementById("email-view-body").innerHTML = email.body;
 
   document
     .querySelector("#reply")
     .addEventListener("click", () => compose_email(email));
+
+  console.log(email);
 }
 
 function changeToRead(email) {
